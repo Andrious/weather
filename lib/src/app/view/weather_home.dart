@@ -21,20 +21,18 @@
 ///
 ///
 
-
 import 'dart:async' show Completer;
 
-import 'package:flutter/material.dart' show AppBar, BuildContext, Center, CircularProgressIndicator, Colors, EdgeInsets, Icon, IconButton, Icons, Key, ListView, MaterialPageRoute, Navigator, Padding, RefreshIndicator, Scaffold, State, StatefulWidget, Text, TextStyle, Widget;
+import 'package:flutter/material.dart';
 
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart' show BlocBuilder, BlocProvider;
 
 import 'package:weather/src/app/controller.dart';
 
 import 'package:weather/src/app/view.dart';
 
 class WeatherHome extends StatefulWidget {
-
-  WeatherHome({Key key}): super(key: key);
+  WeatherHome({Key key}) : super(key: key);
 
   @override
   State<WeatherHome> createState() => _WeatherState();
@@ -57,6 +55,7 @@ class _WeatherState extends State<WeatherHome> {
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: <Widget>[
+          AppMenu.show(this),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
@@ -70,7 +69,7 @@ class _WeatherState extends State<WeatherHome> {
                 _weatherBloc.dispatch(FetchWeather(city: city));
               }
             },
-          )
+          ),
         ],
       ),
       body: Center(
@@ -145,5 +144,65 @@ class _WeatherState extends State<WeatherHome> {
   void dispose() {
     _weatherBloc.dispose();
     super.dispose();
+  }
+}
+
+class AppMenu {
+  static State _state;
+
+  static PopupMenuButton<String> show(State state) {
+    _state = state;
+    return PopupMenuButton<String>(
+      onSelected: _showMenuSelection,
+      itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+            PopupMenuItem<String>(value: 'Settings', child: Text('Settings')),
+            const PopupMenuItem<String>(value: 'About', child: Text('About')),
+          ],
+    );
+  }
+
+  static _showMenuSelection(String value) async {
+    switch (value) {
+      case 'Settings':
+        TempUnits.show(
+          context: _state.context,
+        );
+        break;
+      case 'About':
+        showAboutDialog(
+            context: _state.context,
+            applicationName: "Flutter Weather",
+            children: [Text('A Flutter Weather App')]);
+        break;
+      default:
+    }
+  }
+}
+
+class TempUnits {
+  static Future<void> show({
+    @required BuildContext context,
+  }) {
+    final settingsBloc = BlocProvider.of<SettingsBloc>(context);
+    bool unitSet =
+        settingsBloc.currentState.temperatureUnits == TemperatureUnits.celsius;
+    String unitLabel = unitSet ? 'Celsius' : 'Fahrenheit';
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) =>
+            SimpleDialog(title: Text(unitLabel), children: <Widget>[
+              Container(
+                  padding: EdgeInsets.all(9.0),
+                  child: Center(
+                    child: Column(children: [
+                      Switch(
+                          value: unitSet,
+                          onChanged: (bool set) {
+                            settingsBloc.dispatch(TemperatureUnitsToggled());
+                            Navigator.pop(context);
+                          })
+                    ]),
+                  )),
+            ]));
   }
 }
