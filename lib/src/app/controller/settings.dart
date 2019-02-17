@@ -32,9 +32,8 @@ class Settings {
   static Settings _this;
   Settings._();
 
-  static TemperatureUnits _units = TemperatureUnits.celsius;
-
   static TemperatureUnits get temperatureUnits => _units;
+  static TemperatureUnits _units = TemperatureUnits.celsius;
 
   static temperatureUnitsToggled() {
     _units = _units == TemperatureUnits.celsius
