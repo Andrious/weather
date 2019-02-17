@@ -26,8 +26,6 @@ export 'package:weather/src/app/view/weather.dart';
 
 export 'package:weather/src/app/view/weather_temperature.dart';
 
-
-
 export 'package:weather/src/app/view/weather_home.dart';
 
 export 'package:weather/src/app/view/city_selection.dart';
