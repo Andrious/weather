@@ -25,8 +25,6 @@ import 'package:flutter/material.dart';
 
 import 'package:weather/src/app/view.dart' show WeatherApp;
 
-
-
 import 'package:bloc/bloc.dart' show BlocDelegate, BlocSupervisor, Transition;
 
 import 'package:weather/src/app/controller.dart' show App;
@@ -37,7 +35,7 @@ void main() => runApp(WeatherApp());
 //class SimpleBlocDelegate extends BlocDelegate {
 //  @override
 //  onTransition(Transition transition) {
-////    print(transition);
+//    print(transition);
 //  }
 //}
 //
