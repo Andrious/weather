@@ -23,9 +23,9 @@
 
 import 'package:flutter/material.dart' show Colors, MaterialColor, ThemeData;
 
-import 'package:weather/src/app/model.dart';
+import 'package:weather/src/app/model.dart' show WeatherCondition;
 
-import 'package:mvc_application/controller.dart';
+import 'package:mvc_application/controller.dart' show ControllerMVC;
 
 class ThemeCon extends ControllerMVC {
   static ThemeCon _this;
