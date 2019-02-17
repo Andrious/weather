@@ -23,7 +23,40 @@
 
 import 'dart:async' show Completer;
 
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'
+    show
+        AppBar,
+        BuildContext,
+        Center,
+        CircularProgressIndicator,
+        Colors,
+        Column,
+        Container,
+        EdgeInsets,
+        Icon,
+        IconButton,
+        Icons,
+        Key,
+        ListView,
+        MaterialApp,
+        MaterialPageRoute,
+        Navigator,
+        Padding,
+        PopupMenuButton,
+        PopupMenuItem,
+        RefreshIndicator,
+        Scaffold,
+        SimpleDialog,
+        State,
+        StatefulWidget,
+        Switch,
+        Text,
+        TextStyle,
+        Widget,
+        WidgetBuilder,
+        required,
+        showAboutDialog,
+        showDialog;
 
 import 'package:mvc_application/mvc.dart' show StateMVC;
 
@@ -32,12 +65,14 @@ import 'package:weather/src/app/model.dart' as model;
 import 'package:weather/src/app/view.dart'
     show
         CitySelection,
-        WeatherTemperature,
         GradientContainer,
         LastUpdated,
-        Location;
+        Location,
+        TemperatureUnits,
+        WeatherTemperature;
 
-import 'package:weather/src/app/controller.dart' show WeatherCon, ThemeCon;
+import 'package:weather/src/app/controller.dart'
+    show Settings, ThemeCon, WeatherCon;
 
 class WeatherApp extends StatefulWidget {
   WeatherApp({Key key}) : super(key: key);
@@ -67,12 +102,15 @@ class Weather extends StatefulWidget {
 }
 
 class _WeatherState extends StateMVC<Weather> {
-  WeatherCon _weatherCon = WeatherCon();
-  Completer<void> _refreshCompleter = Completer<void>();
+  WeatherCon _weatherCon;
+  Completer<void> _refreshCompleter;
 
   @override
   void initState() {
     super.initState();
+    _weatherCon = WeatherCon();
+    add(_weatherCon);
+    _refreshCompleter = Completer<void>();
   }
 
   @override
@@ -81,6 +119,7 @@ class _WeatherState extends StateMVC<Weather> {
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: <Widget>[
+          WeatherAppMenu.show(this),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
@@ -91,7 +130,8 @@ class _WeatherState extends StateMVC<Weather> {
                 ),
               );
               _weatherCon.fetchWeather(city: city).then((weather) {
-                ThemeCon.weatherChanged(condition: weather?.condition).refresh();
+                ThemeCon.weatherChanged(condition: weather?.condition)
+                    .refresh();
                 refresh();
               });
             },
@@ -121,8 +161,12 @@ class _WeatherState extends StateMVC<Weather> {
             color: ThemeCon.color,
             child: RefreshIndicator(
               onRefresh: () {
-                _weatherCon.refreshWeather(city: weather.location);
-                ThemeCon.weatherChanged(condition: weather?.condition).refresh();
+                _weatherCon
+                    .refreshWeather(city: _weatherCon.city)
+                    .then((weather) {
+                  ThemeCon.weatherChanged(condition: weather?.condition)
+                      .refresh();
+                });
                 return _refreshCompleter.future;
               },
               child: ListView(
@@ -164,4 +208,63 @@ class BuildWidget extends StatefulWidget {
 class _WidgetBuilderState extends State<BuildWidget> {
   @override
   Widget build(BuildContext context) => widget.builder(context);
+}
+
+class WeatherAppMenu {
+  static State _state;
+
+  static PopupMenuButton<String> show(State state) {
+    _state = state;
+    return PopupMenuButton<String>(
+      onSelected: _showMenuSelection,
+      itemBuilder: (BuildContext context) => <PopupMenuItem<String>>[
+            PopupMenuItem<String>(value: 'Settings', child: Text('Settings')),
+            const PopupMenuItem<String>(value: 'About', child: Text('About')),
+          ],
+    );
+  }
+
+  static _showMenuSelection(String value) async {
+    switch (value) {
+      case 'Settings':
+        UnitsOfTemp.show(
+          context: _state.context,
+        );
+        break;
+      case 'About':
+        showAboutDialog(
+            context: _state.context,
+            applicationName: "Flutter Weather",
+            children: [Text('A Flutter Weather App')]);
+        break;
+      default:
+    }
+  }
+}
+
+class UnitsOfTemp {
+  static Future<void> show({
+    @required BuildContext context,
+  }) {
+    bool unitSet = Settings.temperatureUnits == TemperatureUnits.celsius;
+    String unitLabel = unitSet ? 'Celsius' : 'Fahrenheit';
+    return showDialog<void>(
+        context: context,
+        builder: (BuildContext context) =>
+            SimpleDialog(title: Text(unitLabel), children: <Widget>[
+              Container(
+                  padding: EdgeInsets.all(9.0),
+                  child: Center(
+                    child: Column(children: [
+                      Switch(
+                          value: unitSet,
+                          onChanged: (bool set) {
+                            Settings.temperatureUnitsToggled();
+                            WeatherCon().refresh();
+                            Navigator.pop(context);
+                          })
+                    ]),
+                  )),
+            ]));
+  }
 }
