@@ -21,11 +21,11 @@
 ///
 ///
 
-import 'package:mvc_application/controller.dart';
+import 'package:mvc_application/controller.dart' show ControllerMVC;
 
-import 'package:weather/src/app/model.dart' as mod show Weather;
+import 'package:weather/src/app/model.dart' as mod;
 
-import 'package:weather/src/app/controller.dart';
+import 'package:weather/src/app/controller.dart' show WeatherRepository;
 
 class WeatherCon extends ControllerMVC {
   static WeatherCon _this;
@@ -45,12 +45,11 @@ class WeatherCon extends ControllerMVC {
   mod.Weather get weather => _weather;
   mod.Weather _weather;
 
-  Future<mod.Weather> get future => Future.value(_weather);
-
   bool get error => _error;
   bool _error;
 
   Future<mod.Weather> fetchWeather({String city}) async {
+    if(city == null) return _weather;
     _city = city;
     _weather = null;
     _error = false;
@@ -62,10 +61,11 @@ class WeatherCon extends ControllerMVC {
     return _weather;
   }
 
-  refreshWeather({String city}) async {
+  Future<mod.Weather> refreshWeather({String city}) async {
     try {
-      _weather = await fetchWeather(city: city);
-      refresh();
+      var weather = await weatherRepository.getWeather(city);
+      _weather = weather;
     } catch (_) {}
+    return _weather;
   }
 }
