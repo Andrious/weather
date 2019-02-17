@@ -21,8 +21,17 @@
 ///
 ///
 
-
-import 'package:flutter/material.dart' show BuildContext, Colors, FontWeight, Key, StatelessWidget, Text, TextStyle, Widget, required;
+import 'package:flutter/material.dart'
+    show
+        BuildContext,
+        Colors,
+        FontWeight,
+        Key,
+        StatelessWidget,
+        Text,
+        TextStyle,
+        Widget,
+        required;
 
 import 'package:meta/meta.dart' show required;
 
