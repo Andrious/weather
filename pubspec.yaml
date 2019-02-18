@@ -1,7 +1,7 @@
 name: weather
 description: A simple Weather App demonstrating Flutter
 
-version: 0.2.1
+version: 0.3.0
 
 environment:
   sdk: ">=2.0.0-dev.68.0 <3.0.0"
@@ -14,8 +14,8 @@ dependencies:
 
   mvc_application:
 #    path: ../../packages/mvc_application
-      git:
-        url: git://github.com/AndriousSolutions/mvc_application.git
+    git:
+      url: git://github.com/AndriousSolutions/mvc_application.git
 
   http:
     #^0.12.0

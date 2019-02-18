@@ -33,6 +33,7 @@ import 'package:flutter/material.dart'
         Column,
         Container,
         EdgeInsets,
+        GlobalKey,
         Icon,
         IconButton,
         Icons,
@@ -46,6 +47,7 @@ import 'package:flutter/material.dart'
         PopupMenuItem,
         RefreshIndicator,
         Scaffold,
+        ScaffoldState,
         SimpleDialog,
         State,
         StatefulWidget,
@@ -68,6 +70,8 @@ import 'package:weather/src/app/view.dart'
         GradientContainer,
         LastUpdated,
         Location,
+        SettingsDrawer,
+        Switcher,
         TemperatureUnits,
         WeatherTemperature;
 
@@ -104,6 +108,8 @@ class Weather extends StatefulWidget {
 class _WeatherState extends StateMVC<Weather> {
   WeatherCon _weatherCon;
   Completer<void> _refreshCompleter;
+  // Scaffold key
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   void initState() {
@@ -116,10 +122,21 @@ class _WeatherState extends StateMVC<Weather> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: SettingsDrawer(
+          con: Switcher(
+              temperatureUnits: Settings.temperatureUnits,
+              onChanged: (bool set) {
+                Settings.temperatureUnitsToggled();
+                WeatherCon().refresh();
+                Navigator.pop(context);
+              })),
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: <Widget>[
-          WeatherAppMenu.show(this),
+          IconButton(
+              icon: new Icon(Icons.settings),
+              onPressed: () => _scaffoldKey.currentState.openEndDrawer()),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {

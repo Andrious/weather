@@ -30,8 +30,10 @@ import 'package:bloc/bloc.dart' show BlocDelegate, BlocSupervisor, Transition;
 import 'package:weather/src/app/controller.dart' show App;
 
 
+/// Comment out to try the Bloc version.
 void main() => runApp(WeatherApp());
 
+/// Uncomment to try the Bloc version.
 //class SimpleBlocDelegate extends BlocDelegate {
 //  @override
 //  onTransition(Transition transition) {

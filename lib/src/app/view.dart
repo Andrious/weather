@@ -24,6 +24,8 @@
 
 export 'package:weather/src/app/view/weather.dart';
 
+export 'package:weather/src/app/view/settings_drawer.dart';
+
 export 'package:weather/src/app/view/weather_temperature.dart';
 
 export 'package:weather/src/app/view/weather_home.dart';

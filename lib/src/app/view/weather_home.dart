@@ -42,6 +42,8 @@ class _WeatherState extends State<WeatherHome> {
   WeatherBloc _weatherBloc;
   Completer<void> _refreshCompleter;
 
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+
   @override
   void initState() {
     super.initState();
@@ -51,11 +53,22 @@ class _WeatherState extends State<WeatherHome> {
 
   @override
   Widget build(BuildContext context) {
+    SettingsBloc settingsBloc = BlocProvider.of<SettingsBloc>(context);
     return Scaffold(
+      key: _scaffoldKey,
+      endDrawer: SettingsDrawer(
+          con: Switcher(
+              temperatureUnits: settingsBloc.currentState.temperatureUnits,
+              onChanged: (bool set) {
+                settingsBloc.dispatch(TemperatureUnitsToggled());
+                Navigator.pop(context);
+              })),
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: <Widget>[
-          AppMenu.show(this),
+          IconButton(
+              icon: new Icon(Icons.settings),
+              onPressed: () => _scaffoldKey.currentState.openEndDrawer()),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
