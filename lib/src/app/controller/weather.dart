@@ -46,7 +46,7 @@ class WeatherCon extends ControllerMVC {
   mod.Weather _weather;
 
   bool get error => _error;
-  bool _error;
+  bool _error = false;
 
   Future<mod.Weather> fetchWeather({String city}) async {
     if(city == null) return _weather;
