@@ -60,7 +60,7 @@ import 'package:flutter/material.dart'
         showAboutDialog,
         showDialog;
 
-import 'package:mvc_application/mvc.dart' show StateMVC;
+import 'package:mvc_pattern/mvc_pattern.dart' show StateMVC;
 
 import 'package:weather/src/app/model.dart' as model;
 

@@ -21,7 +21,7 @@
 ///
 ///
 
-import 'package:mvc_application/controller.dart' show ControllerMVC;
+import 'package:mvc_pattern/mvc_pattern.dart' show ControllerMVC;
 
 import 'package:weather/src/app/model.dart' as mod;
 
